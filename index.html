@@ -1,284 +1,575 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"><head>
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-2">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Does anybody ever read this text?</title>
-    <link rel="shortcut icon" href="/favicon.ico" type="image/gif">
-    <style type="text/css">
-    /*<![CDATA[*/
-     body { background-color: #000000; color: #ffffff; }
-    
-     a { text-decoration: none; }
-     a.right { float: right; }
-     a.left { float: left; }
-     a[rel="me"] { visibility: hidden; }
-     :link { color: #00ffff; border: none; }
-     :visited { color: #00cccc; border: none; }
-     :hover { color: #00ff00; border: none; }
-     .css1 {
-      position:absolute;
-      top:0px;
-      left:0px;
-      width:16px;height:16px;
-      font-family:Arial;
-      font-size:16px;
-      text-align:center;
-      font-weight:bold;
-     }
-     .css2 {
-      position:absolute;top:0px;left:0px;
-      width:10px;height:10px;
-      font-family:Arial;
-      font-size:10px;
-      text-align:center;
-     }
-    /*]]>*/
-    </style>
-   
-    <body >
-  
-    <script type="text/javascript">
-    <!-- Silly Clock 3 (updated) by http://www.btinternet.com/~kurt.grigg/javascript
-    //modified by ender:
-    // - now works in Firebird 0.7
-    // - limit the clock to the document area
-    // - added onresize handler
-    //fix by SpecLad: proper alignment in Opera 10
-    //updated for Firefox 24
-    
-    //Hide from old Netscape 4.
-    if (!document.layers){
-    
-    //Clock colours
-    dCol='#00ff00';//date colour.
-    fCol='#ffffff';//face colour.
-    sCol='#ffffff';//seconds colour.
-    mCol='#00ff00';//minutes colour.
-    hCol='#00ff00';//hours colour.
-    
-    //Controls
-    kgy1=0; //Y distance from mouse.
-    kgx1=0; //X distance from mouse.
-    kgv1=0.4;  //Follow/delay speed.
-    kgv2=10;   //Run speed (timeout).
-    
-    
-    //Alter nothing below! Alignments will be lost!
-    var ie=(navigator.appName == "Microsoft Internet Explorer")?true:false;
-    var n7=(document.getElementById&&!ie);
-    var o7=(navigator.appName.indexOf("Opera") != -1) && (parseInt(navigator.appVersion) <= 7);
-    if (o7) n7=false;
-    kgd=new Array("SUNDAY","MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY","SATURDAY");
-    kgm=new Array("JANUARY","FEBRUARY","MARCH","APRIL","MAY","JUNE","JULY","AUGUST","SEPTEMBER","OCTOBER","NOVEMBER","DECEMBER");
-    date=new Date();
-    day=date.getDate();
-    year=date.getYear();
-    if (year < 2000) year=year+1900; 
-    tmpdate=" "+kgd[date.getDay()]+" "+day+" "+kgm[date.getMonth()]+" "+year;
-    D=tmpdate.split("");
-    N='1 2 3 4 5 6 7 8 9 10 11 12';
-    N=N.split(" ");
-    F=N.length;
-    H='...';
-    H=H.split("");
-    M='....';
-    M=M.split("");
-    S='.....';
-    S=S.split("");
-    Dy=new Array();
-    Dx=new Array();
-    DY=new Array();
-    DX=new Array();
-    kgh1=40;
-    kgw1=40;
-    if (n7) {
-     kgmy=document.documentElement.clientHeight/2;
-     kgmx=document.documentElement.clientWidth/2;
-    } else {
-     kgmy=document.body.clientHeight/2;
-     kgmx=document.body.clientWidth/2;
-    }
-    kgs=0;
-    kga1=360/F;
-    kga2=360/D.length;
-    kgh2=kgh1/5.5;
-    kgw2=kgw1/5.5;
-    kgy2=-7;
-    kgx2=-3;
-    tmr=null;
-    tmps=new Array();
-    tmpm=new Array(); 
-    tmph=new Array();
-    tmpf=new Array(); 
-    tmpd=new Array();
-    if (ie){ 
-    document.write('<div id="anti_scrollbars" style="position:absolute;top:0px;left:0px"><div style="position:relative">'); 
-    }
-    algn=new Array();
-    for (i=0; i < D.length; i++){
-    algn[i]=(parseInt(D[i]) || D[i]==0)?10:9;
-    document.write('<div id="_date'+i+'" class="css2" style="font-size:'+algn[i]+'px;color:'+dCol+'">'+D[i]+'</div>');
-    tmpd[i]=document.getElementById("_date"+i).style;
-    }
-    for (i=0; i < F; i++){
-    document.write('<div id="_face'+i+'" class="css2" style="color:'+fCol+'">'+N[i]+'</div>');
-    tmpf[i]=document.getElementById("_face"+i).style; 
-    }
-    for (i=0; i < H.length; i++){
-    document.write('<div id="_hours'+i+'" class="css1" style="color:'+hCol+'">'+H[i]+'</div>');
-    tmph[i]=document.getElementById("_hours"+i).style;
-    }
-    for (i=0; i < M.length; i++){
-    document.write('<div id="_minutes'+i+'" class="css1" style="color:'+mCol+'">'+M[i]+'</div>');
-    tmpm[i]=document.getElementById("_minutes"+i).style; 
-    }
-    for (i=0; i < S.length; i++){
-    document.write('<div id="_seconds'+i+'" class="css1" style="color:'+sCol+'">'+S[i]+'</div>');
-    tmps[i]=document.getElementById("_seconds"+i).style;         
-    }
-    if (ie){ 
-    document.write('</div></div>');
-    }
-    var vis=true;
-    function onoff(){
-    if (vis==true){ 
-    vis=false;
-    document.con1.con2.value="Clock On";
-    }
-    else{ 
-    vis=true;
-    document.con1.con2.value="Clock Off";
-    Delay();
-    }
-    kill();
-    }
-    function kill(){
-    if (vis){ 
-    //O7.50 works better with Netscape routines; should test with older versions
-    document.onmousemove=(n7||o7)?mouseNS:mouseIEO;
-    }
-    else document.onmousemove=null;
-    } 
-    if (n7||o7){
-     if (window.captureEvents)
-      window.captureEvents(Event.MOUSEMOVE);
-     function mouseNS(e){
-     kgmy = e.pageY+kgy1-(window.pageYOffset);
-     kgmx = e.pageX+kgx1;
-     if (kgmx<80) kgmx=80;
-     if (o7){
-      if (kgmx>document.body.clientWidth-80) kgmx=document.body.clientWidth-80;
-      if (kgmy>document.body.clientHeight-80) kgmy=document.body.clientHeight-80;
-     } else {
-      if (kgmx>document.documentElement.clientWidth-80) kgmx=document.documentElement.clientWidth-80;
-      if (kgmy>document.documentElement.clientHeight-80) kgmy=document.documentElement.clientHeight-80;
-     }
-     if (kgmy<80) kgmy=80;
-     if (!vis) kill();
-     }
-    if (n7||o7)document.onmousemove=mouseNS;
-    }
-    var dbg=0;
-    if (ie){
-     function mouseIEO(){
-     if (document.documentElement) //ie6 in strict mode
-      kgmy=event.clientY+kgy1+document.documentElement.scrollTop;
-     else //not tested, should be used by IE5, IE6 in quirks mode
-      kgmy=event.clientY+kgy1+document.body.scrollTop;
-    
-     kgmx=event.clientX+kgx1;
-     if (kgmx<80) kgmx=80;
-     if (document.documentElement && document.documentElement.clientHeight > 0) {
-      if (kgmx>document.documentElement.clientWidth-80) kgmx=document.documentElement.clientWidth-80;
-      if (kgmy>document.documentElement.clientHeight-80) kgmy=document.documentElement.clientHeight-80;
-     } else {
-      if (kgmx>document.body.clientWidth-80) kgmx=document.body.clientWidth-80;
-      if (kgmy>document.body.clientHeight-80) kgmy=document.body.clientHeight-80;
-     }
-     if (kgmy<80) kgmy=80;
-     if (!vis) kill();
-    
-     }
-    document.onmousemove=mouseIEO;
-    }
-    var sum=parseInt(D.length+F+H.length+M.length+S.length)+1;
-    for (i=0; i < sum; i++){
-    Dy[i]=0;
-    Dx[i]=0;
-    if (n7) {
-     DY[i]=document.documentElement.clientHeight/2;
-     DX[i]=document.documentElement.clientWidth/2;
-    } else {
-     DY[i]=document.body.clientHeight/2;
-     DX[i]=document.body.clientWidth/2;
-    }
-    }
-    
-    function ClockAndAssign(){
-    time=new Date();
-    secs=time.getSeconds();
-    sec=Math.PI*(secs-15)/30;
-    mins=time.getMinutes();
-    min=Math.PI*(mins-15)/30;
-    hrs=time.getHours();
-    hr=Math.PI*(hrs-3)/6+Math.PI*parseInt(time.getMinutes())/360;
-    if (ie){
-    anti_scrollbars.style.top=window.document.body.scrollTop;
-    }
-    //added +'px' for mozilla firebird compatibility
-    for (i=0; i < S.length; i++){
-     tmps[i].top=Dy[D.length+F+H.length+M.length+i]+kgy2+(i*kgh2)*Math.sin(sec)+kgs+'px';
-     tmps[i].left=Dx[D.length+F+H.length+M.length+i]+kgx2+(i*kgw2)*Math.cos(sec)+'px';
-     }
-    for (i=0; i < M.length; i++){
-     tmpm[i].top=Dy[D.length+F+H.length+i]+kgy2+(i*kgh2)*Math.sin(min)+kgs+'px';
-     tmpm[i].left=Dx[D.length+F+H.length+i]+kgx2+(i*kgw2)*Math.cos(min)+'px';
-     }
-    for (i=0; i < H.length; i++){
-     tmph[i].top=Dy[D.length+F+i]+kgy2+(i*kgh2)*Math.sin(hr)+kgs+'px';
-     tmph[i].left=Dx[D.length+F+i]+kgx2+(i*kgw2)*Math.cos(hr)+'px';
-     }
-    for (i=0; i < F; i++){
-     tmpf[i].top=Dy[D.length+i]+kgh1*Math.sin(-1.0471+i*kga1*Math.PI/180)+kgs+'px';
-     tmpf[i].left=Dx[D.length+i]+kgw1*Math.cos(-1.0471+i*kga1*Math.PI/180)+'px';
-     }
-    for (i=0; i < D.length; i++){
-     tmpd[i].top=Dy[i]+kgh1*1.5*Math.sin(-sec+i*kga2*Math.PI/180)+kgs+'px';
-     tmpd[i].left=Dx[i]+kgw1*1.5*Math.cos(-sec+i*kga2*Math.PI/180)+'px';
-     }
-    if (!vis)clearTimeout(tmr);
-    }
-    function Delay(){
-    kgs=(ie)?0:window.pageYOffset;
-    Dy[0]=(vis)?Math.round(DY[0]+=((kgmy)-DY[0])*kgv1):-100;
-    Dx[0]=(vis)?Math.round(DX[0]+=((kgmx)-DX[0])*kgv1):-100;
-    for (i=1; i < sum; i++){
-    Dy[i]=(vis)?Math.round(DY[i]+=(Dy[i-1]-DY[i])*kgv1):-100;
-    Dx[i]=(vis)?Math.round(DX[i]+=(Dx[i-1]-DX[i])*kgv1):-100;
-    }
-    tmr=setTimeout('Delay()',kgv2);
-    ClockAndAssign();
-    }
-    window.onload=Delay;
-    window.onresize=WindowResize;
-    }
-    function WindowResize(){
-     if (kgmx<80) kgmx=80;
-     if (kgmy<80) kgmy=80;
-     if (o7){
-      if (kgmx>document.body.clientWidth-80) kgmx=document.body.clientWidth-80;
-      if (kgmy>document.body.clientHeight-80) kgmy=document.body.clientHeight-80;
-     } 
-     if (n7) {
-      if (kgmx>document.documentElement.clientWidth-80) kgmx=document.documentElement.clientWidth-80;
-      if (kgmy>document.documentElement.clientHeight-80) kgmy=document.documentElement.clientHeight-80;
-     }
-     if (ie) {
-      if (kgmx>document.body.clientWidth-80) kgmx=document.body.clientWidth-80;
-      if (kgmy>document.body.clientHeight-80) kgmy=document.body.clientHeight-80;
-     }
-    }
-    //-->
-    </script>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Portfólio GitHub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+         :root {
+            --linkedin-blue: #0a66c2;
+            --linkedin-light: #f3f2ef;
+            --text-dark: #000000E6;
+            --text-light: #00000099;
+            --border-color: #00000026;
+        }
 
-    </div></body></html>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', 'Fira Sans', Ubuntu, Oxygen, 'Oxygen Sans', Cantarell, sans-serif;
+        }
+
+        body {
+            background-color: var(--linkedin-light);
+            color: var(--text-dark);
+            line-height: 1.5;
+        }
+    /* ... outros estilos existentes ... */
+
+      /* Ajuste do banner para o canvas */
+      .profile-banner {
+        height: 350px;
+        position: relative;
+        margin-bottom: 100px;
+        background: #0a1f2e; /* Fundo escuro para melhor contraste */
+        overflow: hidden;
+    }
+
+    #matrixRain {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0.8; /* Ajuste a transparência aqui */
+    }
+
+    .banner-decoration {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 80px;
+        background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.3));
+        z-index: 2;
+    }
+    .profile-container {
+        max-width: 1128px;
+        margin: -150px auto 0; /* Ajuste da margem negativa */
+        padding: 0 20px;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Melhorias no Card Principal */
+    .profile-main {
+        background: white;
+        border-radius: 15px;
+        border: 1px solid var(--border-color);
+        padding: 32px;
+        margin-bottom: 24px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Ajuste na foto de perfil */
+    .profile-photo {
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        border: 5px solid white;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .profile-photo:hover {
+        transform: scale(1.05);
+    }
+
+    
+    /* Estilização dos Links Sociais */
+    .social-links {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-top: 20px;
+        padding: 6px 16px;
+       
+    }
+
+    .social-link {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        border: 2px solid transparent;
+        border-radius: 16px;
+        font-weight: 600;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .social-link i {
+        font-size: 1.2em;
+        z-index: 1;
+    }
+
+    .social-link span {
+        z-index: 1;
+    }
+
+    /* Efeito de hover com gradiente */
+    .social-link::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(45deg, var(--color-start), var(--color-end));
+        opacity: 0.1;
+        transition: all 0.3s ease;
+    }
+
+   
+
+    /* Cores específicas para cada rede social */
+    .social-link.github {
+        --color-start: #24292e;
+        --color-end: #40464e;
+        color: #24292e;
+        border-color: #24292e;
+    }
+    /* Ajustes nas seções */
+    .section {
+        background: white;
+        border-radius: 15px;
+        border: 1px solid var(--border-color);
+        padding: 32px;
+        margin-bottom: 24px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease;
+    }
+
+    .section:hover {
+        transform: translateY(-5px);
+    }
+
+    /* Adicionar decoração no banner */
+    .banner-decoration {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 80px;
+        background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.1));
+    }
+
+    /* Container para o conteúdo principal */
+    .main-content {
+        background: var(--linkedin-light);
+        min-height: 100vh;
+        padding-bottom: 50px;
+    }
+
+    /* Responsividade */
+    @media (max-width: 768px) {
+        .profile-banner {
+            height: 250px;
+            margin-bottom: 50px;
+        }
+
+        .profile-container {
+            margin-top: -100px;
+        }
+
+        .profile-photo {
+            width: 150px;
+            height: 150px;
+        }
+
+        .profile-main,
+        .section {
+            padding: 20px;
+        }
+    }
+
+        .btn {
+            margin: 2px;
+            padding: 6px 16px;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--linkedin-blue);
+            color: white;
+            text-decoration: none;
+            border: none;
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            text-decoration: none;
+            color: var(--linkedin-blue);
+            border: 1px solid var(--linkedin-blue);
+        }
+
+        /* Seções */
+        .section {
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        /* Experiência */
+        .experience-item {
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .experience-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .experience-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .experience-company {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .experience-date {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        /* Habilidades */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .skill-item {
+            background: #f3f2ef;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .profile-header {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .profile-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+   
+
+  
+<div class="profile-banner">
+    <canvas id="matrixRain"></canvas>
+    <div class="banner-decoration"></div>
+</div>  
+    <div class="profile-container">
+        <div class="profile-main">
+            <div class="profile-header">
+                <img src="https://scontent-for2-1.xx.fbcdn.net/v/t39.30808-1/481702523_3985043198444407_3373106772844480830_n.jpg?stp=dst-jpg_s200x200_tt6&_nc_cat=104&ccb=1-7&_nc_sid=1d2534&_nc_eui2=AeH_NHh2K8Z8EhxkJkiPYxuH6Hq7T0sFFLLoertPSwUUsgFVvSjayV_D3Dkrp_bWgHIUrD7S9pIAqFc8Ei0wSfL7&_nc_ohc=fQ72cuvERaEQ7kNvgFjdIPh&_nc_oc=AdncotD-2lu79PD45Ldnv8Rf5kWtfwW74WhQS-ckihO-9P_ynSokwORww6l4O34jKLE6nI5bkcMnHCSRuKuK7we4&_nc_zt=24&_nc_ht=scontent-for2-1.xx&_nc_gid=9jBRaMTbgZQery-FroCXow&oh=00_AYFKX40rlXKPg7Qoh5szlLJyhxOTPXprKR4ojetKEyo5xw&oe=67E7A996" alt="Jaison Vale" class="profile-photo">
+                <div class="profile-info">
+                    <h1>Jaison Vale</h1>
+                    <h2>Desenvolvedor Full Stack</h2>
+                    <p class="profile-location">
+                        <i class="fas fa-map-marker-alt"></i> Esperantina, Brasil
+                    </p>
+                    <div class="profile-actions">
+                        <a href="https://github.com/jaisonvale" class="btn btn-primary github">
+                            <i class="fab fa-github"></i>
+                            <span>GitHub</span>
+                        </a>
+                        <button class="btn btn-secondary">Mensagem</button>
+                        <button class="btn btn-secondary">Mais</button>
+                    </div>
+                </div>
+            </div>
+            <div class="profile-about">
+                <p>Desenvolvedor Full Stack com experiência em JavaScript, React, Node.js e Python. 
+                   Apaixonado por criar soluções inovadoras e compartilhar conhecimento.</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Experiência</h2>
+            <div class="experience-item">
+                <div class="experience-header">
+                    <h3 class="experience-company">Empresa Tech</h3>
+                    <span class="experience-date">2022 - Presente</span>
+                </div>
+                <p class="experience-role">Desenvolvedor Full Stack Senior</p>
+                <p class="experience-description">
+                    Desenvolvimento de aplicações web escaláveis utilizando React, Node.js e AWS.
+                    Liderança técnica de equipe com 5 desenvolvedores.
+                </p>
+            </div>
+            <div class="experience-item">
+                <div class="experience-header">
+                    <h3 class="experience-company">Startup Inovadora</h3>
+                    <span class="experience-date">2020 - 2022</span>
+                </div>
+                <p class="experience-role">Desenvolvedor Full Stack</p>
+                <p class="experience-description">
+                    Desenvolvimento de features para produto SaaS utilizando React e Python.
+                    Implementação de CI/CD e práticas ágeis.
+                </p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Habilidades</h2>
+            <div class="skills-grid">
+                <div class="skill-item">JavaScript</div>
+                <div class="skill-item">React.js</div>
+                <div class="skill-item">Node.js</div>
+                <div class="skill-item">Python</div>
+                <div class="skill-item">AWS</div>
+                <div class="skill-item">Docker</div>
+                <div class="skill-item">Git</div>
+                <div class="skill-item">SQL</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Formação</h2>
+            <div class="experience-item">
+                <div class="experience-header">
+                    <h3 class="experience-company">CEEP LEONARDO DAS DORES</h3>
+                    <span class="experience-date">2012 - 2014</span><br>
+                    <h3 class="experience-company">Universidade Federal do Piauí</h3>
+                    <span class="experience-date">2017 - 2021</span>
+                </div>
+                <p class="experience-role">Ensino Médio Técnico em informática</p>
+                <p class="experience-role">Licenciatura em Ciência da Computação</p>
+            </div>
+        </div>
+    </div>
+<!-- Adicione esta seção antes do fechamento do body -->
+<footer style="margin-top: 50px; text-align: center; padding: 30px 0; background: var(--github-light); border-top: 1px solid var(--github-border);">
+    <div class="container">
+        <p>© 2024 Jaison Vale. Todos os direitos reservados.</p>
+        <div style="margin-top: 20px;">
+            <a href="#" style="margin: 0 10px; color: var(--github-text);"><i class="fab fa-github"></i></a>
+            <a href="#" style="margin: 0 10px; color: var(--github-text);"><i class="fab fa-linkedin"></i></a>
+            <a href="#" style="margin: 0 10px; color: var(--github-text);"><i class="fab fa-twitter"></i></a>
+        </div>
+    </div>
+</footer>
+<script>
+                 
+    document.addEventListener('DOMContentLoaded', () => {
+        const nameElement = document.getElementById('exploding-name');
+        const text = nameElement.textContent;
+        nameElement.textContent = '';
+
+        // Separar as palavras e criar spans para cada letra
+        text.split(' ').forEach((word, wordIndex) => {
+            // Para cada palavra
+            word.split('').forEach((letter, letterIndex) => {
+                const span = document.createElement('span');
+                span.textContent = letter;
+                span.className = 'letter';
+                
+                // Definir direções aleatórias para a explosão
+                span.style.setProperty('--x', (Math.random() - 0.5).toFixed(2));
+                span.style.setProperty('--y', (Math.random() - 0.5).toFixed(2));
+                span.style.setProperty('--rotate', Math.random().toFixed(2));
+                span.style.setProperty('--delay', letterIndex); // Para implode sequencial
+                
+                nameElement.appendChild(span);
+            });
+
+            // Adicionar espaço entre as palavras (se não for a última palavra)
+            if (wordIndex < text.split(' ').length - 1) {
+                const spaceSpan = document.createElement('span');
+                spaceSpan.textContent = ' ';
+                spaceSpan.className = 'letter space';
+                spaceSpan.style.setProperty('--x', (Math.random() - 0.5).toFixed(2));
+                spaceSpan.style.setProperty('--y', (Math.random() - 0.5).toFixed(2));
+                spaceSpan.style.setProperty('--rotate', Math.random().toFixed(2));
+                spaceSpan.style.setProperty('--delay', word.length);
+                nameElement.appendChild(spaceSpan);
+            }
+        });
+
+        const letters = document.querySelectorAll('.letter');
+
+        // Inicia a explosão
+        setTimeout(() => {
+            letters.forEach(letter => {
+                letter.classList.add('exploded');
+            });
+        }, 100);
+
+        // Inicia a implosão após 2 segundos
+        setTimeout(() => {
+            letters.forEach(letter => {
+                letter.classList.remove('exploded');
+                letter.classList.add('implode');
+            });
+        }, 2000);
+
+        // Adiciona efeito de hover após a animação inicial
+        setTimeout(() => {
+            nameElement.addEventListener('mouseenter', () => {
+                letters.forEach(letter => {
+                    letter.style.textShadow = '0 0 10px #fff, 0 0 20px #fff, 0 0 30px #0ff';
+                    letter.style.transition = 'text-shadow 0.3s ease';
+                });
+            });
+
+            nameElement.addEventListener('mouseleave', () => {
+                letters.forEach(letter => {
+                    letter.style.textShadow = 'none';
+                });
+            });
+        }, 3500);
+    });
+    const canvas = document.getElementById('matrixRain');
+    const ctx = canvas.getContext('2d');
+
+    // Ajusta o tamanho do canvas para corresponder ao tamanho do banner
+    function resizeCanvas() {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+    }
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // Caracteres para a chuva (incluindo números binários e outros símbolos)
+    const chars = '10アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+    const charArray = chars.split('');
+
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+
+    // Array para manter o controle da posição Y de cada coluna
+    const drops = [];
+    for (let i = 0; i < columns; i++) {
+        drops[i] = Math.random() * -100;
+    }
+
+    // Cores personalizadas
+    const defaultColor = '#0f0'; // Verde matriz tradicional
+    const highlightColor = '#fff'; // Branco para destaque
+    const fadeColor = '#040'; // Verde escuro para efeito fade
+
+    function draw() {
+        // Cria um efeito de fade com fundo semi-transparente
+        ctx.fillStyle = 'rgba(0, 15, 20, 0.05)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.font = fontSize + 'px monospace';
+        
+        // Desenha os caracteres
+        for (let i = 0; i < drops.length; i++) {
+            // Seleciona um caractere aleatório
+            const char = charArray[Math.floor(Math.random() * charArray.length)];
+            
+            // Define a cor com base na posição
+            if (Math.random() > 0.98) {
+                ctx.fillStyle = highlightColor; // Caracteres ocasionais em branco
+            } else {
+                ctx.fillStyle = defaultColor; // Cor padrão verde
+            }
+
+            // Desenha o caractere
+            ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+
+            // Move a gota para baixo
+            drops[i]++;
+
+            // Reseta a gota quando atinge o final ou aleatoriamente
+            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                drops[i] = 0;
+            }
+        }
+    }
+
+    // Velocidade da animação
+    setInterval(draw, 35);
+
+    // Efeito de hover no canvas
+    canvas.addEventListener('mousemove', (e) => {
+        const x = e.offsetX;
+        const y = e.offsetY;
+        
+        // Encontra a coluna mais próxima
+        const column = Math.floor(x / fontSize);
+        
+        // Cria um efeito de "perturbação" nas gotas próximas
+        for (let i = Math.max(0, column - 5); i < Math.min(drops.length, column + 6); i++) {
+            if (Math.random() > 0.5) {
+                drops[i] -= Math.random() * 2;
+            }
+        }
+    });
+
+    // Ajuste para telas de alta resolução (DPI)
+    function handleResize() {
+        const dpr = window.devicePixelRatio || 1;
+        const rect = canvas.getBoundingClientRect();
+        
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        
+        ctx.scale(dpr, dpr);
+        
+        canvas.style.width = rect.width + 'px';
+        canvas.style.height = rect.height + 'px';
+    }
+
+    window.addEventListener('resize', handleResize);
+    handleResize();
+</script>
+</body>
+</html>
