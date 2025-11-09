@@ -4,11 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meu Portfólio GitHub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
          :root {
             --linkedin-blue: #0a66c2;
-            --linkedin-light: #;
+            --linkedin-light: rgba(10,102,194,0.04);
             --text-dark: #000000E6;
             --text-light: #00000099;
             --border-color: #00000026;
@@ -22,69 +24,192 @@
         }
 
         body {
-            background: url('https://images.unsplash.com/photo-1503264116251-35a269479413') no-repeat center/cover;
+            background: #0a1f2e; /* Fundo escuro para melhor contraste */
             color: var(--text-dark);
             line-height: 1.5;
+            position: relative;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
-    /* ... outros estilos existentes ... */
 
-      /* Ajuste do banner para o canvas */
-      .profile-banner {
-        height: 350px;
-        position: relative;
-        margin-bottom: 100px;
-        background: #0a1f2e; /* Fundo escuro para melhor contraste */
-        overflow: hidden;
-    }
+        #matrixRain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.8;
+            z-index: 0;
+            pointer-events: none; /* permitir clicar nos elementos acima */
+        }
 
-    #matrixRain {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        opacity: 0.8; /* Ajuste a transparência aqui */
-    }
+        /* Garantir que todo o conteúdo do body fique acima do canvas */
+        body > *:not(#matrixRain) {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Ajuste do banner */
+        .profile-banner {
+            height: 300px;
+            position: relative;
+            margin-bottom: 100px;
+            overflow: hidden;
+            background: transparent;
+        }
 
     .banner-decoration {
-        position: absolute;
+        position: relative;
         bottom: 0;
         left: 0;
         right: 0;
-        height: 80px;
+        height: 700px;
         background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.3));
         z-index: 2;
     }
     .profile-container {
-        max-width: 1128px;
-        margin: -150px auto 0; /* Ajuste da margem negativa */
-        padding: 0 20px;
+        max-width: 1200px;
+        margin: 180px auto 0;
+        padding: 0 30px;
         position: relative;
-        z-index: 1;
+        z-index: 2;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 30px;
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     /* Melhorias no Card Principal */
     .profile-main {
-        background: white;
-        border-radius: 15px;
-        border: 1px solid var(--border-color);
-        padding: 32px;
-        margin-bottom: 24px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        background: rgba(255, 255, 255, 0.90);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-radius: 25px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 50px;
+        margin-bottom: 35px;
+        box-shadow: 
+            0 10px 30px rgba(0, 0, 0, 0.1),
+            0 1px 8px rgba(0, 0, 0, 0.05);
+        position: relative;
+        z-index: 2;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    .profile-main:hover {
+        transform: translateY(-8px);
+        box-shadow: 
+            0 15px 45px rgba(0, 0, 0, 0.15),
+            0 2px 10px rgba(0, 0, 0, 0.08);
+        background: rgba(255, 255, 255, 0.95);
     }
 
     /* Ajuste na foto de perfil */
-    .profile-photo img {
-        width: 180px;
-        height: 180px;
-        border-radius: 50%;
-        border: 5px solid white;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease;
+    .profile-photo {
+        position: relative;
+        display: inline-block;
+        margin: 0;
     }
 
-    .profile-photo:hover {
-        transform: scale(1.05);
+    /* Layout do cabeçalho do perfil */
+    .profile-header {
+        display: flex;
+        align-items: flex-start;
+        gap: 40px;
+        margin-bottom: 30px;
+    }
+
+    .profile-info {
+        flex: 1;
+    }
+
+    .profile-info h1 {
+        font-size: 2.4rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 8px;
+        letter-spacing: -0.02em;
+    }
+
+    .profile-info h2 {
+        font-size: 1.2rem;
+        color: var(--text-light);
+        font-weight: 500;
+        margin-bottom: 12px;
+    }
+
+    .profile-location {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--text-light);
+        font-size: 0.95rem;
+        margin-bottom: 20px;
+    }
+
+    .profile-location i {
+        font-size: 1.1em;
+        color: #ff7f00;
+    }
+
+    .profile-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .profile-about {
+        font-size: 1.05rem;
+        line-height: 1.6;
+        color: var(--text-dark);
+        max-width: 800px;
+    }
+
+    .profile-photo img {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        border: 6px solid rgba(255, 255, 255, 0.9);
+        box-shadow: 
+            0 8px 20px rgba(0, 0, 0, 0.15),
+            0 0 0 1px rgba(255, 255, 255, 0.3);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        filter: brightness(1.02);
+    }
+
+    .profile-photo::after {
+        content: '';
+        position: absolute;
+        top: -8px;
+        left: -8px;
+        right: -8px;
+        bottom: -8px;
+        border-radius: 50%;
+        background: linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0.3));
+        z-index: -1;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .profile-photo:hover img {
+        transform: scale(1.05) rotate(2deg);
+        border-color: rgba(255, 255, 255, 1);
+        filter: brightness(1.05);
+    }
+
+    .profile-photo:hover::after {
+        opacity: 1;
     }
 
     
@@ -150,17 +275,21 @@
     }
     /* Ajustes nas seções */
     .section {
-        background: white;
-        border-radius: 15px;
-        border: 1px solid var(--border-color);
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
         padding: 32px;
-        margin-bottom: 24px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        transition: transform 0.3s ease;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
     .section:hover {
         transform: translateY(-5px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        background: rgba(255, 255, 255, 0.9);
     }
 
     /* Adicionar decoração no banner */
@@ -169,38 +298,64 @@
         bottom: 0;
         left: 0;
         right: 0;
-        height: 80px;
-        background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.1));
+        height: 120px;
+        background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.2));
+        z-index: 1;
     }
 
     /* Container para o conteúdo principal */
     .main-content {
-        background: var(--linkedin-light);
+        background: transparent;
         min-height: 100vh;
-        padding-bottom: 50px;
+        padding: 20px 0 50px;
+        position: relative;
+        z-index: 1;
     }
 
     /* Responsividade */
+    @media (max-width: 1024px) {
+        .profile-container {
+            max-width: 95%;
+            padding: 0 20px;
+        }
+
+        .profile-main {
+            padding: 40px 30px;
+        }
+    }
+
     @media (max-width: 768px) {
         .profile-banner {
-            height: 250px;
-            margin-bottom: 50px;
+            height: 180px;
+            margin-bottom: 20px;
         }
 
         .profile-container {
-            margin-top: -100px;
+            margin-top: -120px;
+            padding: 0 15px;
+            gap: 20px;
+        }
+
+        .profile-main {
+            padding: 30px 20px;
+            margin-bottom: 25px;
+            border-radius: 20px;
         }
 
         .profile-photo {
-            width: 150px;
-            height: 150px;
+            margin-bottom: 20px;
         }
 
+        .profile-photo img {
+            width: 160px;
+            height: 160px;
+            border-width: 4px;
+        }
         .profile-main,
         .section {
             padding: 20px;
         }
-    }
+    
 
         .btn {
             margin: 2px;
@@ -229,22 +384,48 @@
 
         /* Seções */
         .section {
-            background: white;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            padding: 24px;
-            margin-bottom: 24px;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 35px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+            background: rgba(255, 255, 255, 0.95);
         }
 
         .section-title {
-            font-size: 20px;
+            font-size: 1.8rem;
             font-weight: 600;
-            margin-bottom: 16px;
+            color: var(--text-dark);
+            margin-bottom: 25px;
+            position: relative;
+            padding-bottom: 12px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #ff7f00, #ff9a33);
+            border-radius: 2px;
         }
 
         /* Experiência */
         .experience-item {
-            margin-bottom: 24px;
+            margin-bottom: 35px;
+            padding-bottom: 35px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
             padding-bottom: 24px;
             border-bottom: 1px solid var(--border-color);
         }
@@ -261,28 +442,69 @@
             margin-bottom: 8px;
         }
 
+        .experience-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
         .experience-company {
+            font-size: 1.25rem;
             font-weight: 600;
-            font-size: 16px;
+            color: var(--text-dark);
+            margin-bottom: 4px;
         }
 
         .experience-date {
+            color: #ff7f00;
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 4px 12px;
+            background: rgba(255, 127, 0, 0.1);
+            border-radius: 12px;
+        }
+
+        .experience-role {
+            font-size: 1.1rem;
             color: var(--text-light);
-            font-size: 14px;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        .experience-description {
+            color: var(--text-dark);
+            line-height: 1.6;
+            font-size: 0.95rem;
         }
 
         /* Habilidades */
         .skills-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 16px;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 20px;
         }
 
         .skill-item {
-            background: #f3f2ef;
-            padding: 12px;
-            border-radius: 4px;
-            font-size: 14px;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 16px 20px;
+            border-radius: 15px;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-dark);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .skill-item:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
         /* Responsividade */
@@ -291,27 +513,130 @@
                 flex-direction: column;
                 align-items: center;
                 text-align: center;
+                gap: 25px;
+            }
+
+            .profile-info h1 {
+                font-size: 2rem;
+            }
+
+            .profile-info h2 {
+                font-size: 1.1rem;
+            }
+
+            .profile-location {
+                justify-content: center;
             }
 
             .profile-actions {
-                flex-direction: column;
+                justify-content: center;
+                gap: 10px;
+            }
+
+            .profile-about {
+                text-align: center;
+                font-size: 1rem;
             }
 
             .btn {
-                width: 100%;
+                min-width: 160px;
                 text-align: center;
             }
+
+            .section {
+                padding: 25px;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+                text-align: center;
+            }
+
+            .section-title::after {
+                left: 50%;
+                transform: translateX(-50%);
+                width: 50px;
+            }
+
+            .experience-header {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                gap: 10px;
+            }
+
+            .experience-date {
+                margin-bottom: 8px;
+            }
+
+            .experience-role, .experience-description {
+                text-align: center;
+            }
+
+            .skills-grid {
+                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+                gap: 15px;
+            }
+
+            .skill-item {
+                padding: 12px 15px;
+                justify-content: center;
+            }
         }
+    }
+        /* Footer */
+        .site-footer {
+            margin-top: 50px;
+            text-align: center;
+            padding: 30px 0;
+            background: rgba(0, 0, 0, 0.25);
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            color: #ff7f00; /* Laranja principal */
+            position: relative;
+            z-index: 3;
+        }
+
+        .site-footer .footer-text {
+            color: #ff9a33;
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .site-footer .footer-socials {
+            margin-top: 16px;
+        }
+
+        .site-footer .footer-link {
+            margin: 0 10px;
+            color: #ff9a33;
+            text-decoration: none;
+            font-size: 18px;
+            transition: transform 0.15s ease, color 0.15s ease;
+        }
+
+        .site-footer .footer-link:hover {
+            color: #ffd6a3;
+            transform: translateY(-3px);
+            text-shadow: 0 0 8px rgba(255, 127, 0, 0.45);
+        }
+
+        /* Centralizar container do footer */
+        .site-footer .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
     </style>
 </head>
 <body>
-   
 
-  
-<div class="profile-banner">
     <canvas id="matrixRain"></canvas>
-    <div class="banner-decoration"></div>
-</div>  
     <div class="profile-container">
         <div class="profile-main">
             <div class="profile-header">
@@ -341,73 +666,169 @@
         </div>
 
         <div class="section">
-            <h2 class="section-title">Experiência</h2>
-            <div class="experience-item">
-                <div class="experience-header">
-                    <h3 class="experience-company">Empresa Tech</h3>
-                    <span class="experience-date">2022 - Presente</span>
+            <h2 class="section-title text-center mb-4">Experiência</h2>
+            <div class="row">
+                <div class="col-12 mb-4">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h3 class="experience-company h5 mb-0">Empresa Tech</h3>
+                                <span class="badge bg-primary">2022 - Presente</span>
+                            </div>
+                            <h4 class="experience-role text-muted h6 mb-3">Desenvolvedor Full Stack Senior</h4>
+                            <p class="experience-description mb-0">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                Desenvolvimento de aplicações web escaláveis utilizando React, Node.js e AWS.
+                                <br>
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                Liderança técnica de equipe com 5 desenvolvedores.
+                            </p>
+                        </div>
+                    </div>
                 </div>
-                <p class="experience-role">Desenvolvedor Full Stack Senior</p>
-                <p class="experience-description">
-                    Desenvolvimento de aplicações web escaláveis utilizando React, Node.js e AWS.
-                    Liderança técnica de equipe com 5 desenvolvedores.
-                </p>
-            </div>
-            <div class="experience-item">
-                <div class="experience-header">
-                    <h3 class="experience-company">Startup Inovadora</h3>
-                    <span class="experience-date">2020 - 2022</span>
+                <div class="col-12">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h3 class="experience-company h5 mb-0">Startup Inovadora</h3>
+                                <span class="badge bg-primary">2020 - 2022</span>
+                            </div>
+                            <h4 class="experience-role text-muted h6 mb-3">Desenvolvedor Full Stack</h4>
+                            <p class="experience-description mb-0">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                Desenvolvimento de features para produto SaaS utilizando React e Python.
+                                <br>
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                Implementação de CI/CD e práticas ágeis.
+                            </p>
+                        </div>
+                    </div>
                 </div>
-                <p class="experience-role">Desenvolvedor Full Stack</p>
-                <p class="experience-description">
-                    Desenvolvimento de features para produto SaaS utilizando React e Python.
-                    Implementação de CI/CD e práticas ágeis.
-                </p>
             </div>
         </div>
 
         <div class="section">
-            <h2 class="section-title">Habilidades</h2>
-            <div class="skills-grid">
-                <div class="skill-item">JavaScript</div>
-                <div class="skill-item">React.js</div>
-                <div class="skill-item">Node.js</div>
-                <div class="skill-item">Python</div>
-                <div class="skill-item">AWS</div>
-                <div class="skill-item">Docker</div>
-                <div class="skill-item">Git</div>
-                <div class="skill-item">SQL</div>
+            <h2 class="section-title text-center mb-4">Habilidades</h2>
+            <div class="row g-3">
+                <div class="col-6 col-sm-4 col-md-3">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="fab fa-js fs-2 text-warning mb-2"></i>
+                            <h5 class="card-title h6 mb-0">JavaScript</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-sm-4 col-md-3">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="fab fa-react fs-2 text-info mb-2"></i>
+                            <h5 class="card-title h6 mb-0">React.js</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-sm-4 col-md-3">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="fab fa-node-js fs-2 text-success mb-2"></i>
+                            <h5 class="card-title h6 mb-0">Node.js</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-sm-4 col-md-3">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="fab fa-python fs-2 text-primary mb-2"></i>
+                            <h5 class="card-title h6 mb-0">Python</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-sm-4 col-md-3">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="fab fa-aws fs-2 text-warning mb-2"></i>
+                            <h5 class="card-title h6 mb-0">AWS</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-sm-4 col-md-3">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="fab fa-docker fs-2 text-info mb-2"></i>
+                            <h5 class="card-title h6 mb-0">Docker</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-sm-4 col-md-3">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="fab fa-git-alt fs-2 text-danger mb-2"></i>
+                            <h5 class="card-title h6 mb-0">Git</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-sm-4 col-md-3">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="fas fa-database fs-2 text-secondary mb-2"></i>
+                            <h5 class="card-title h6 mb-0">SQL</h5>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
         <div class="section">
-            <h2 class="section-title">Formação</h2>
-            <div class="experience-item">
-                <div class="experience-header">
-                    <h3 class="experience-company">CEEP LEONARDO DAS DORES</h3>
-                    <span class="experience-date">2012 - 2014</span><br>
-                    <h3 class="experience-company">Universidade Federal do Piauí</h3>
-                    <span class="experience-date">2017 - 2021</span>
+            <h2 class="section-title text-center mb-4">Formação</h2>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <h3 class="h5 mb-1">CEEP LEONARDO DAS DORES</h3>
+                                    <p class="text-muted mb-0">Ensino Médio Técnico em informática</p>
+                                </div>
+                                <span class="badge bg-primary">2012 - 2014</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-graduation-cap text-primary me-2"></i>
+                                <span class="text-muted">Formação Técnica</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <p class="experience-role">Ensino Médio Técnico em informática</p>
-                <p class="experience-role">Licenciatura em Ciência da Computação</p>
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <h3 class="h5 mb-1">Universidade Federal do Piauí</h3>
+                                    <p class="text-muted mb-0">Licenciatura em Ciência da Computação</p>
+                                </div>
+                                <span class="badge bg-primary">2017 - 2021</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-university text-primary me-2"></i>
+                                <span class="text-muted">Graduação</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-<!-- Adicione esta seção antes do fechamento do body -->
-<footer style="margin-top: 50px; text-align: center; padding: 30px 0; background: var(--github-light); border-top: 1px solid var(--github-border);">
-    <div class="container">
-        <p>© 2024 Jaison Vale. Todos os direitos reservados.</p>
-        <div style="margin-top: 20px;">
-            <a href="#" style="margin: 0 10px; color: var(--github-text);"><i class="fab fa-github"></i></a>
-            <a href="#" style="margin: 0 10px; color: var(--github-text);"><i class="fab fa-linkedin"></i></a>
-            <a href="#" style="margin: 0 10px; color: var(--github-text);"><i class="fab fa-twitter"></i></a>
+    <footer class="site-footer">
+            <p class="footer-text">© 2025 Jaison Vale. Todos os direitos reservados.</p>
+            <div class="footer-socials">
+                <a href="#" class="footer-link" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                <a href="#" class="footer-link" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                <a href="#" class="footer-link" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            </div>
         </div>
-    </div>
-</footer>
-<script>
-                 
-    document.addEventListener('DOMContentLoaded', () => {
+    </footer>
+    <!-- Bootstrap JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>    document.addEventListener('DOMContentLoaded', () => {
         const nameElement = document.getElementById('exploding-name');
         const text = nameElement.textContent;
         nameElement.textContent = '';
